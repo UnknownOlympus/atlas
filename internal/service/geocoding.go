@@ -135,12 +135,9 @@ func (gs *GeocodingService) worker(ctx context.Context, idx int, wg *sync.WaitGr
 				gs.log.ErrorContext(
 					ctx,
 					"Could not update failure count for task",
-					"worker",
-					idx,
-					"task",
-					task.ID,
-					"error",
-					err,
+					"worker", idx,
+					"task", task.ID,
+					"error", err,
 				)
 			}
 			gs.metrics.ActiveWorkers.Dec()
@@ -153,12 +150,9 @@ func (gs *GeocodingService) worker(ctx context.Context, idx int, wg *sync.WaitGr
 			gs.log.ErrorContext(
 				ctx,
 				"Failed to update coordinates for task",
-				"worker",
-				idx,
-				"task",
-				task.ID,
-				"error",
-				err,
+				"worker", idx,
+				"task", task.ID,
+				"error", err,
 			)
 		} else {
 			gs.log.DebugContext(ctx, "Worker successfully processed the task", "worker", idx, "task", task.ID)

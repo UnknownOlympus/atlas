@@ -70,7 +70,7 @@ func (r *Repository) UpdateTaskCoordinates(ctx context.Context, taskID int, coor
 
 	_, err := r.db.Exec(ctx, query, coords.Latidude, coords.Longitude, taskID)
 	if err != nil {
-		return fmt.Errorf("failed to update task ccordinates: %w", err)
+		return fmt.Errorf("failed to update task coordinates: %w", err)
 	}
 
 	return nil

@@ -18,6 +18,12 @@ type GoogleProvider struct {
 	log    *slog.Logger // log is the logger for logging operations
 }
 
+// GeocodingClient defines an interface for geocoding services.
+// It provides a method to convert a given address into geographic coordinates.
+type GeocodingClient interface {
+	Geocode(ctx context.Context, address string) (*models.Coordinates, error)
+}
+
 const googleReqLimit = 50
 
 // ErrEmptyResponse is returned when the Google Maps API responds with an empty result.

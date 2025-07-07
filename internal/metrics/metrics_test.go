@@ -1,0 +1,14 @@
+package metrics_test
+
+import (
+	"testing"
+
+	"github.com/Houeta/geocoding-service/internal/metrics"
+	"github.com/prometheus/client_golang/prometheus"
+)
+
+func TestNewMetrics(t *testing.T) {
+	reg := prometheus.NewRegistry()
+
+	_ = metrics.NewMetrics(reg)
+}
