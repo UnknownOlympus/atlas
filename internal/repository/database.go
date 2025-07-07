@@ -11,6 +11,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Database is an interface that defines methods for executing SQL commands
+// and querying the database. It provides methods to execute commands,
+// retrieve multiple rows, and retrieve a single row from the database.
 type Database interface {
 	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
 	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)

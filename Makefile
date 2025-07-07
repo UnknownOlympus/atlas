@@ -19,7 +19,13 @@ LDFLAGS     := -w -s
 default: help
 
 help:
-	@echo "Usage: make <build|test-coverage>"
+	@echo "Usage: make <build|lint|test-coverage>"
+
+.PHONY: lint
+lint:
+	@echo
+	@echo "==> Running linter <=="
+	@ golangci-lint run ./...
 
 .PHONY: test-coverage
 test-coverage:

@@ -5,13 +5,25 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
+// Metrics holds the metrics for monitoring the geocoding service.
+// It includes counters for tasks processed and API errors,
+// a histogram for request durations, and a gauge for active workers.
 type Metrics struct {
-	TaskProcessed  *prometheus.CounterVec
-	APIErrors      prometheus.Counter
-	RequestSeconds *prometheus.HistogramVec
-	ActiveWorkers  prometheus.Gauge
+	TaskProcessed  *prometheus.CounterVec   // Counter for the number of tasks processed
+	APIErrors      prometheus.Counter       // Counter for the number of API errors
+	RequestSeconds *prometheus.HistogramVec // Histogram for tracking request durations
+	ActiveWorkers  prometheus.Gauge         // Gauge for the number of active workers
 }
 
+// NewMetrics creates a new Metrics instance with the provided Prometheus Registerer.
+// It initializes counters, histograms, and gauges for tracking geocoding tasks,
+// API errors, request durations, and active workers.
+//
+// Parameters:
+//   - reg: A Prometheus Registerer used to register the metrics.
+//
+// Returns:
+//   - A pointer to the newly created Metrics instance.
 func NewMetrics(reg prometheus.Registerer) *Metrics {
 	return &Metrics{
 		TaskProcessed: promauto.With(reg).NewCounterVec(prometheus.CounterOpts{

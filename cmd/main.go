@@ -34,7 +34,6 @@ func main() {
 	// Create a context that will be canceled when an interrupt signal is received.
 	// This allows for graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
 
 	// Load application configuration.
 	cfg := config.MustLoad()
@@ -59,11 +58,14 @@ func main() {
 	// Create a new repository instance using the database connection.
 	repo := repository.NewRepository(dtb, logger)
 
-	geoProvider, err := geocoding.NewGoogleProvider(cfg.ApiKey, logger, cfg.Workers)
+	// Create a new geocode provider
+	geoProvider, err := geocoding.NewGoogleProvider(cfg.APIKey, logger, cfg.Workers)
 	if err != nil {
 		log.Fatalf("Failed to add geocoder provider: %v", err)
 	}
+	defer stop()
 
+	// Init a new geocode service using the geo provider.
 	geoService := service.NewGeocodingServie(logger, repo, geoProvider, appMetrics, cfg.Workers, cfg.Interval)
 
 	// Log that the application has started.
@@ -80,8 +82,6 @@ func main() {
 	// Log that a shutdown signal has been received.
 	logger.InfoContext(ctx, "Shutdown signal received. Stopping application...")
 
-	// TODO: stop functions
-
 	// Log graceful shutdown completion.
 	logger.InfoContext(ctx, "Application stopped gracefully.")
 }
@@ -92,17 +92,24 @@ func main() {
 // Parameters:
 // - ctx: A context.Context for managing cancellation and timeouts.
 // - log: A logger for logging server events and errors.
+// - reg: A registry with Prometheus collectors.
 // - dtb: A pgxpool connector for database methods (ping)
 // - port: The port number on which the server will listen.
-func startMonitoringServer(ctx context.Context, log *slog.Logger, reg *prometheus.Registry, dtb *pgxpool.Pool, port int) {
-	http.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
+func startMonitoringServer(
+	ctx context.Context,
+	log *slog.Logger,
+	reg *prometheus.Registry,
+	dtb *pgxpool.Pool,
+	port int,
+) {
+	http.HandleFunc("/healthz", func(writer http.ResponseWriter, _ *http.Request) {
 		log.DebugContext(ctx, "Performing health checks...")
 		status, body := http.StatusOK, "OK"
 		if err := dtb.Ping(ctx); err != nil {
 			status, body = http.StatusServiceUnavailable, "DB ping failed"
 		}
-		w.WriteHeader(status)
-		_, err := w.Write([]byte(body))
+		writer.WriteHeader(status)
+		_, err := writer.Write([]byte(body))
 		if err != nil {
 			log.ErrorContext(ctx, "failed to write reply", "error", err)
 		}

@@ -7,16 +7,24 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config holds the configuration settings for the application.
-// It includes the environment type, database configuration,
-// token for authentication.
+// Config holds the configuration settings for the geocoding service.
+// It includes the environment, server port, API key, number of workers,
+// interval for processing, and database configuration.
+//
+// Fields:
+// - Env: The current environment (e.g., local, dev, prod).
+// - Port: The port for the geocoder monitoring server.
+// - APIKey: The API key for accessing external services.
+// - Workers: The number of concurrent workers for processing requests.
+// - Interval: The duration between processing intervals.
+// - Database: Configuration settings for the PostgreSQL database.
 type Config struct {
-	Env      string `yaml:"env"`           // Env is the current environment: local, dev, prod.
-	Port     int    `yaml:"geocoder.port"` // Port is the geocoder monitoring server port.
-	ApiKey   string
-	Workers  int
-	Interval time.Duration
-	Database PostgresConfig `yaml:"postgres"` // Database holds the postgres database configuration
+	Env      string         `yaml:"env"`               // Env is the current environment: local, dev, prod.
+	Port     int            `yaml:"geocoder.port"`     // Port is the geocoder monitoring server port.
+	APIKey   string         `yaml:"geocoder.api_key"`  // The API key for accessing external services.
+	Workers  int            `yaml:"geocoder.workers"`  // The number of concurrent workers for processing requests.
+	Interval time.Duration  `yaml:"geocoder.interval"` // The duration between processing intervals.
+	Database PostgresConfig `yaml:"postgres"`          // Database holds the postgres database configuration
 }
 
 // PostgresConfig struct holds the configuration details for connecting to a PostgreSQL database.
@@ -54,7 +62,7 @@ func MustLoad() *Config {
 	return &Config{
 		Env:      viper.GetString("env"),
 		Port:     viper.GetInt("geocoder.port"),
-		ApiKey:   viper.GetString("geocoder.api_key"),
+		APIKey:   viper.GetString("geocoder.api_key"),
 		Workers:  viper.GetInt("geocoder.workers"),
 		Interval: viper.GetDuration("geocoder.interval"),
 		Database: PostgresConfig{

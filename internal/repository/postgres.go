@@ -7,6 +7,17 @@ import (
 	"github.com/Houeta/geocoding-service/internal/models"
 )
 
+// FetchTasksForGeocoding retrieves a list of tasks that require geocoding.
+// It returns tasks that have a NULL latitude, are not closed, have fewer than 5 geocoding attempts,
+// and have a non-empty address. The results are ordered by creation date and limited to the specified count.
+//
+// Parameters:
+// - ctx: The context for the operation, allowing for cancellation and timeout.
+// - limit: The maximum number of tasks to retrieve.
+//
+// Returns:
+// - A slice of models.Task containing the tasks that match the criteria.
+// - An error if the query fails or if there is an issue scanning the results.
 func (r *Repository) FetchTasksForGeocoding(ctx context.Context, limit int) ([]models.Task, error) {
 	var tasks []models.Task
 	query := `
@@ -44,6 +55,8 @@ func (r *Repository) FetchTasksForGeocoding(ctx context.Context, limit int) ([]m
 	return tasks, nil
 }
 
+// UpdateTaskCoordinates updates the latitude and longitude of a task identified by taskID.
+// It sets the geocoding_error field to NULL. It returns an error if the update fails.
 func (r *Repository) UpdateTaskCoordinates(ctx context.Context, taskID int, coords models.Coordinates) error {
 	query := `
 		UPDATE tasks
@@ -63,6 +76,10 @@ func (r *Repository) UpdateTaskCoordinates(ctx context.Context, taskID int, coor
 	return nil
 }
 
+// IncrementFailureCount increments the geocoding attempt count for a specific task
+// identified by taskID and updates the associated error message. It takes a context
+// for managing request-scoped values, cancellation, and deadlines. If the update
+// operation fails, it returns an error with additional context.
 func (r *Repository) IncrementFailureCount(ctx context.Context, taskID int, errMsg string) error {
 	query := `
 		UPDATE tasks
