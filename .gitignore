@@ -13,7 +13,6 @@
 
 # Code coverage profiles and other test artifacts
 *.out
-coverage.*
 *.coverprofile
 profile.cov
 
@@ -30,3 +29,4 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+config.test.yaml
