@@ -7,7 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-func TestNewMetrics(t *testing.T) {
+func TestNewMetrics(_ *testing.T) {
 	reg := prometheus.NewRegistry()
 
 	_ = metrics.NewMetrics(reg)

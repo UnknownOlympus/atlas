@@ -128,7 +128,7 @@ func TestUpdateTasCoordinates(t *testing.T) {
 	taskID := 123
 	coords := models.Coordinates{
 		Longitude: 123.123,
-		Latidude:  456.456,
+		Latitude:  456.456,
 	}
 	query := `
 		UPDATE tasks
@@ -148,7 +148,7 @@ func TestUpdateTasCoordinates(t *testing.T) {
 
 		repo := repository.NewRepository(mock, logger)
 
-		mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(coords.Latidude, coords.Longitude, taskID).
+		mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(coords.Latitude, coords.Longitude, taskID).
 			WillReturnError(assert.AnError)
 
 		err = repo.UpdateTaskCoordinates(ctx, taskID, coords)
@@ -167,7 +167,7 @@ func TestUpdateTasCoordinates(t *testing.T) {
 
 		repo := repository.NewRepository(mock, logger)
 
-		mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(coords.Latidude, coords.Longitude, taskID).
+		mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(coords.Latitude, coords.Longitude, taskID).
 			WillReturnResult(pgxmock.NewResult("UPDATE", 1))
 
 		err = repo.UpdateTaskCoordinates(ctx, taskID, coords)

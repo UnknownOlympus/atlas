@@ -68,7 +68,7 @@ func (r *Repository) UpdateTaskCoordinates(ctx context.Context, taskID int, coor
 			task_id = $3;
 	`
 
-	_, err := r.db.Exec(ctx, query, coords.Latidude, coords.Longitude, taskID)
+	_, err := r.db.Exec(ctx, query, coords.Latitude, coords.Longitude, taskID)
 	if err != nil {
 		return fmt.Errorf("failed to update task coordinates: %w", err)
 	}

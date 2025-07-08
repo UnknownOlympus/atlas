@@ -50,5 +50,5 @@ func (gp *GoogleProvider) Geocode(ctx context.Context, address string) (*models.
 	}
 	coords := geocodeResponse[0].Geometry.Location
 
-	return &models.Coordinates{Longitude: coords.Lng, Latidude: coords.Lat}, nil
+	return &models.Coordinates{Longitude: coords.Lng, Latitude: coords.Lat}, nil
 }

@@ -60,7 +60,8 @@ func main() {
 	repo := repository.NewRepository(dtb, logger)
 
 	// Create a new geocode provider
-	client, err := maps.NewClient(maps.WithAPIKey(cfg.APIKey), maps.WithRateLimit((50 / cfg.Workers)))
+	googleRateLimit := 50
+	client, err := maps.NewClient(maps.WithAPIKey(cfg.APIKey), maps.WithRateLimit((googleRateLimit / cfg.Workers)))
 	if err != nil {
 		log.Fatalf("Failed to add geocoder provider: %v", err)
 	}
