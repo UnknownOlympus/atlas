@@ -20,6 +20,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"googlemaps.github.io/maps"
 )
 
 // Constants for different environment types.
@@ -59,11 +60,13 @@ func main() {
 	repo := repository.NewRepository(dtb, logger)
 
 	// Create a new geocode provider
-	geoProvider, err := geocoding.NewGoogleProvider(cfg.APIKey, logger, cfg.Workers)
+	client, err := maps.NewClient(maps.WithAPIKey(cfg.APIKey), maps.WithRateLimit((50 / cfg.Workers)))
 	if err != nil {
 		log.Fatalf("Failed to add geocoder provider: %v", err)
 	}
 	defer stop()
+
+	geoProvider := geocoding.NewGoogleProvider(client, logger)
 
 	// Init a new geocode service using the geo provider.
 	geoService := service.NewGeocodingServie(logger, repo, geoProvider, appMetrics, cfg.Workers, cfg.Interval)
