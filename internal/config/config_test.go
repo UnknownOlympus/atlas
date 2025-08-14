@@ -12,6 +12,7 @@ func Test_MustLoadFromFile(t *testing.T) {
 	t.Setenv("ATLAS_ENV", "local")
 	t.Setenv("ATLAS_INTERVAL", "10m")
 	t.Setenv("ATLAS_PROVIDER_API_KEY", "testAPIKey")
+	t.Setenv("ATLAS_ADDRESS_PREFIX", "USA, ")
 	t.Setenv("DB_HOST", "testHost")
 	t.Setenv("DB_PORT", "12345")
 	t.Setenv("DB_USERNAME", "admin")
@@ -30,6 +31,7 @@ func Test_MustLoadFromFile(t *testing.T) {
 	assert.Equal(t, 8080, cfg.Port)
 	assert.Equal(t, "testAPIKey", cfg.APIKey)
 	assert.Equal(t, 10, cfg.Workers)
+	assert.Equal(t, "USA, ", cfg.AddrPrefix)
 }
 
 func TestMustLoad_IntervalError(t *testing.T) {
