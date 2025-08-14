@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	models "github.com/Houeta/geocoding-service/internal/models"
+	models "github.com/UnknownOlympus/atlas/internal/models"
 	mock "github.com/stretchr/testify/mock"
 )
 

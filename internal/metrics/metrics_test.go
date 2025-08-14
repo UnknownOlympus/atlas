@@ -3,7 +3,7 @@ package metrics_test
 import (
 	"testing"
 
-	"github.com/Houeta/geocoding-service/internal/metrics"
+	"github.com/UnknownOlympus/atlas/internal/metrics"
 	"github.com/prometheus/client_golang/prometheus"
 )
 

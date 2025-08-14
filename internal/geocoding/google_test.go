@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/Houeta/geocoding-service/internal/geocoding"
-	"github.com/Houeta/geocoding-service/test/mocks"
+	"github.com/UnknownOlympus/atlas/internal/geocoding"
+	"github.com/UnknownOlympus/atlas/test/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"googlemaps.github.io/maps"

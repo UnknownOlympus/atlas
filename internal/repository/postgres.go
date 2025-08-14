@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Houeta/geocoding-service/internal/models"
+	"github.com/UnknownOlympus/atlas/internal/models"
 )
 
 // FetchTasksForGeocoding retrieves a list of tasks that require geocoding.

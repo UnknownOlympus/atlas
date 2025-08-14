@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Houeta/geocoding-service/internal/geocoding"
-	"github.com/Houeta/geocoding-service/internal/metrics"
-	"github.com/Houeta/geocoding-service/internal/models"
-	"github.com/Houeta/geocoding-service/internal/repository"
+	"github.com/UnknownOlympus/atlas/internal/geocoding"
+	"github.com/UnknownOlympus/atlas/internal/metrics"
+	"github.com/UnknownOlympus/atlas/internal/models"
+	"github.com/UnknownOlympus/atlas/internal/repository"
 )
 
 // GeocodingService provides methods for geocoding operations,
