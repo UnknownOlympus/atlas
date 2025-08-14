@@ -27,8 +27,8 @@ lint:
 	@echo "==> Running linter <=="
 	@ golangci-lint run ./...
 
-.PHONY: test-coverage
-test-coverage:
+.PHONY: test
+test:
 	@echo
 	@echo "==> Running unit tests with coverage <=="
 	@ ./scripts/coverage.sh

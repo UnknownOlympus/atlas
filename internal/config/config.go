@@ -2,9 +2,10 @@ package config
 
 import (
 	"os"
+	"strconv"
 	"time"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 )
 
 // Config holds the configuration settings for the geocoding service.
@@ -38,39 +39,44 @@ type PostgresConfig struct {
 
 // MustLoad loads the configuration from a YAML file and returns a Config struct.
 func MustLoad() *Config {
-	configPath := os.Getenv("CONFIG_PATH")
-	if configPath == "" {
-		panic("config path is empty")
+	_ = godotenv.Load()
+
+	interval, err := time.ParseDuration(setDeafultEnv("ATLAS_INTERVAL", "10m"))
+	if err != nil {
+		panic("failed to parse interval from configuration")
 	}
 
-	// check if file exists
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		panic("config file does not exist: " + configPath)
+	healthPort, err := strconv.Atoi(setDeafultEnv("ATLAS_HEALTH_PORT", "8080"))
+	if err != nil {
+		panic("failed to parse port for monitoring server from configuration")
 	}
 
-	viper.SetConfigFile(configPath)
-	if err := viper.ReadInConfig(); err != nil {
-		panic("config error: " + err.Error())
+	workers, err := strconv.Atoi(setDeafultEnv("ATLAS_WORKERS", "10"))
+	if err != nil {
+		panic("failed to parse workers from configuration, must be an integer types")
 	}
-
-	viper.SetDefault("postgres.port", "5432")
-	viper.SetDefault("geocoder.port", "8080")
-	viper.SetDefault("geocoder.workers", "10")
-	viper.SetDefault("geocoder.interval", "10m")
-	viper.SetDefault("env", "local")
 
 	return &Config{
-		Env:      viper.GetString("env"),
-		Port:     viper.GetInt("geocoder.port"),
-		APIKey:   viper.GetString("geocoder.api_key"),
-		Workers:  viper.GetInt("geocoder.workers"),
-		Interval: viper.GetDuration("geocoder.interval"),
+		Env:      setDeafultEnv("ATLAS_ENV", "production"),
+		Port:     healthPort,
+		APIKey:   os.Getenv("ATLAS_PROVIDER_API_KEY"),
+		Workers:  workers,
+		Interval: interval,
 		Database: PostgresConfig{
-			Host:     viper.GetString("postgres.host"),
-			Port:     viper.GetString("postgres.port"),
-			User:     viper.GetString("postgres.user"),
-			Password: viper.GetString("postgres.password"),
-			Name:     viper.GetString("postgres.db_name"),
+			Host:     os.Getenv("DB_HOST"),
+			Port:     os.Getenv("DB_PORT"),
+			User:     os.Getenv("DB_USERNAME"),
+			Password: os.Getenv("DB_PASSWORD"),
+			Name:     os.Getenv("DB_NAME"),
 		},
 	}
+}
+
+func setDeafultEnv(key, override string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = override
+	}
+
+	return value
 }

@@ -8,9 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Houeta/geocoding-service/internal/metrics"
-	"github.com/Houeta/geocoding-service/internal/models"
-	"github.com/Houeta/geocoding-service/test/mocks"
+	"github.com/UnknownOlympus/atlas/internal/metrics"
+	"github.com/UnknownOlympus/atlas/internal/models"
+	"github.com/UnknownOlympus/atlas/test/mocks"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/stretchr/testify/assert"
 )

@@ -1,74 +1,57 @@
 package config_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
-	"github.com/Flaque/filet"
-	"github.com/Houeta/geocoding-service/internal/config"
-	"github.com/spf13/viper"
+	"github.com/UnknownOlympus/atlas/internal/config"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
-func TestMustLoad_EmptyPath(t *testing.T) {
-	t.Parallel()
-
-	assert.PanicsWithValue(t, "config path is empty", func() {
-		config.MustLoad()
-	})
-}
-
-func TestMustLoad_FileNotExist(t *testing.T) {
-	t.Setenv("CONFIG_PATH", "./invalid/path")
-	assert.PanicsWithValue(t, "config file does not exist: ./invalid/path", func() {
-		config.MustLoad()
-	})
-}
-
-func TestMustLoad_ReadError(t *testing.T) {
-	tmpFile := filet.TmpFile(t, "", "::::bad_yaml")
-	defer filet.CleanUp(t)
-
-	t.Setenv("CONFIG_PATH", tmpFile.Name())
-
-	viper.SetConfigFile(tmpFile.Name())
-	err := viper.ReadInConfig()
-	require.Error(t, err)
-
-	assert.PanicsWithValue(t, fmt.Sprintf("config error: %v", err), func() {
-		config.MustLoad()
-	})
-}
-
-func TestMustLoad_Success(t *testing.T) {
-	configContent := `
----
-env: "local"
-postgres:
-  host: "localhost"
-  user: "pgUser"
-  password: "pgPassword"
-  db_name: "pgDatabase"
-geocoder:
-   api_key: "testKey"
-`
-	filet.File(t, "conf.yaml", configContent)
-	defer filet.CleanUp(t)
-
-	t.Setenv("CONFIG_PATH", "conf.yaml")
+func Test_MustLoadFromFile(t *testing.T) {
+	t.Setenv("ATLAS_ENV", "local")
+	t.Setenv("ATLAS_INTERVAL", "10m")
+	t.Setenv("ATLAS_PROVIDER_API_KEY", "testAPIKey")
+	t.Setenv("DB_HOST", "testHost")
+	t.Setenv("DB_PORT", "12345")
+	t.Setenv("DB_USERNAME", "admin")
+	t.Setenv("DB_PASSWORD", "adminpass")
+	t.Setenv("DB_NAME", "testName")
 
 	cfg := config.MustLoad()
 
 	assert.Equal(t, "local", cfg.Env)
-	assert.Equal(t, "localhost", cfg.Database.Host)
-	assert.Equal(t, "5432", cfg.Database.Port)
-	assert.Equal(t, "pgUser", cfg.Database.User)
-	assert.Equal(t, "pgPassword", cfg.Database.Password)
-	assert.Equal(t, "pgDatabase", cfg.Database.Name)
-	assert.Equal(t, 8080, cfg.Port)
-	assert.Equal(t, "testKey", cfg.APIKey)
-	assert.Equal(t, 10, cfg.Workers)
+	assert.Equal(t, "testHost", cfg.Database.Host)
+	assert.Equal(t, "12345", cfg.Database.Port)
+	assert.Equal(t, "admin", cfg.Database.User)
+	assert.Equal(t, "adminpass", cfg.Database.Password)
+	assert.Equal(t, "testName", cfg.Database.Name)
 	assert.Equal(t, 10*time.Minute, cfg.Interval)
+	assert.Equal(t, 8080, cfg.Port)
+	assert.Equal(t, "testAPIKey", cfg.APIKey)
+	assert.Equal(t, 10, cfg.Workers)
+}
+
+func TestMustLoad_IntervalError(t *testing.T) {
+	t.Setenv("ATLAS_INTERVAL", "error_value")
+
+	assert.PanicsWithValue(t, "failed to parse interval from configuration", func() {
+		config.MustLoad()
+	})
+}
+
+func TestMustLoad_PortError(t *testing.T) {
+	t.Setenv("ATLAS_HEALTH_PORT", "error_value")
+
+	assert.PanicsWithValue(t, "failed to parse port for monitoring server from configuration", func() {
+		config.MustLoad()
+	})
+}
+
+func TestMustLoad_WorkersError(t *testing.T) {
+	t.Setenv("ATLAS_WORKERS", "error_value")
+
+	assert.PanicsWithValue(t, "failed to parse workers from configuration, must be an integer types", func() {
+		config.MustLoad()
+	})
 }

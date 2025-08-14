@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Houeta/geocoding-service/internal/repository"
+	"github.com/UnknownOlympus/atlas/internal/repository"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"

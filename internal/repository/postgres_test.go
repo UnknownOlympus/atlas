@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/Houeta/geocoding-service/internal/models"
-	"github.com/Houeta/geocoding-service/internal/repository"
+	"github.com/UnknownOlympus/atlas/internal/models"
+	"github.com/UnknownOlympus/atlas/internal/repository"
 	"github.com/pashagolub/pgxmock/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

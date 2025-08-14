@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/Houeta/geocoding-service/internal/models"
+	"github.com/UnknownOlympus/atlas/internal/models"
 	"googlemaps.github.io/maps"
 )
 

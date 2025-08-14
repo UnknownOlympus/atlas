@@ -3,7 +3,7 @@ package geocoding
 import (
 	"context"
 
-	"github.com/Houeta/geocoding-service/internal/models"
+	"github.com/UnknownOlympus/atlas/internal/models"
 )
 
 // Provider is an interface that defines a method for geocoding an address.

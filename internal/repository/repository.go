@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/Houeta/geocoding-service/internal/models"
+	"github.com/UnknownOlympus/atlas/internal/models"
 )
 
 // Repository represents a data repository that interacts with the database
