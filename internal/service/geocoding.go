@@ -22,6 +22,8 @@ type GeocodingService struct {
 	metrics      *metrics.Metrics     // Metrics for tracking service performance
 	numWorkers   int                  // Number of concurrent workers for processing
 	pollInterval time.Duration        // Interval for polling geocoding updates
+	addresPrefix string               // Address prefix for more accurate geocoding (indicating country, city, etc.)
+
 }
 
 // NewGeocodingServie creates a new instance of GeocodingService.
@@ -36,6 +38,7 @@ func NewGeocodingServie(
 	metrics *metrics.Metrics,
 	numWorkers int,
 	pollInterval time.Duration,
+	addressPrefix string,
 ) *GeocodingService {
 	return &GeocodingService{
 		log:          log,
@@ -44,6 +47,7 @@ func NewGeocodingServie(
 		metrics:      metrics,
 		numWorkers:   numWorkers,
 		pollInterval: pollInterval,
+		addresPrefix: addressPrefix,
 	}
 }
 
@@ -121,6 +125,7 @@ func (gs *GeocodingService) worker(ctx context.Context, idx int, wg *sync.WaitGr
 		gs.metrics.ActiveWorkers.Inc()
 		gs.log.DebugContext(ctx, "Processing task", "worker", idx, "task", task.ID)
 
+		task.Address = gs.addresPrefix + task.Address
 		startTime := time.Now()
 		coords, err := gs.provider.Geocode(ctx, task.Address)
 		duration := time.Since(startTime).Seconds()

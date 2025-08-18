@@ -22,7 +22,7 @@ func TestProcessTask(t *testing.T) {
 	req := prometheus.NewRegistry()
 	metrics := metrics.NewMetrics(req)
 	ctx := t.Context()
-	service := NewGeocodingServie(logger, mockRepo, mockProvider, metrics, 2, 1*time.Second)
+	service := NewGeocodingServie(logger, mockRepo, mockProvider, metrics, 2, 1*time.Second, "")
 
 	t.Run("successfull processing", func(t *testing.T) {
 		sampleTasks := []models.Task{{ID: 1, Address: "Kyiv"}}

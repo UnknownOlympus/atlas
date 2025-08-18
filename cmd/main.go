@@ -70,7 +70,15 @@ func main() {
 	geoProvider := geocoding.NewGoogleProvider(client, logger)
 
 	// Init a new geocode service using the geo provider.
-	geoService := service.NewGeocodingServie(logger, repo, geoProvider, appMetrics, cfg.Workers, cfg.Interval)
+	geoService := service.NewGeocodingServie(
+		logger,
+		repo,
+		geoProvider,
+		appMetrics,
+		cfg.Workers,
+		cfg.Interval,
+		cfg.AddrPrefix,
+	)
 
 	// Log that the application has started.
 	logger.InfoContext(ctx, "Application started. Press Ctrl+C to stop.")
