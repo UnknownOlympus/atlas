@@ -20,7 +20,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"googlemaps.github.io/maps"
 )
 
 // Constants for different environment types.
@@ -59,21 +58,30 @@ func main() {
 	// Create a new repository instance using the database connection.
 	repo := repository.NewRepository(dtb, logger)
 
-	// Create a new geocode provider
+	// Create geocoding provider using factory pattern based on configuration
+	// This allows runtime selection between different providers (Google, Nominatim, etc.)
 	googleRateLimit := 50
-	client, err := maps.NewClient(maps.WithAPIKey(cfg.APIKey), maps.WithRateLimit((googleRateLimit / cfg.Workers)))
+	providerConfig := geocoding.ProviderConfig{
+		Type:      geocoding.ProviderType(cfg.ProviderType),
+		APIKey:    cfg.APIKey,
+		RateLimit: googleRateLimit / cfg.Workers,
+		Logger:    logger,
+	}
+
+	geoProvider, err := geocoding.NewProvider(providerConfig)
 	if err != nil {
-		log.Fatalf("Failed to add geocoder provider: %v", err)
+		log.Fatalf("Failed to create geocoding provider: %v", err)
 	}
 	defer stop()
 
-	geoProvider := geocoding.NewGoogleProvider(client, logger)
+	logger.InfoContext(ctx, "Geocoding provider initialized", "type", cfg.ProviderType)
 
 	// Init a new geocode service using the geo provider.
 	geoService := service.NewGeocodingServie(
 		logger,
 		repo,
 		geoProvider,
+		cfg.ProviderType, // Provider name for metrics
 		appMetrics,
 		cfg.Workers,
 		cfg.Interval,

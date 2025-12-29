@@ -19,6 +19,7 @@ type GeocodingService struct {
 	log          *slog.Logger         // Logger for logging service activities
 	repo         repository.Interface // Interface for data repository access
 	provider     geocoding.Provider   // Geocoding provider for external geocoding services
+	providerName string               // Name of the provider for metrics labeling
 	metrics      *metrics.Metrics     // Metrics for tracking service performance
 	numWorkers   int                  // Number of concurrent workers for processing
 	pollInterval time.Duration        // Interval for polling geocoding updates
@@ -28,13 +29,14 @@ type GeocodingService struct {
 
 // NewGeocodingServie creates a new instance of GeocodingService.
 // It takes a logger, a repository interface, a geocoding provider,
-// metrics for monitoring, the number of workers to use, and a
-// polling interval for geocoding requests. It returns a pointer
+// provider name for metrics, metrics for monitoring, the number of workers
+// to use, and a polling interval for geocoding requests. It returns a pointer
 // to the newly created GeocodingService.
 func NewGeocodingServie(
 	log *slog.Logger,
 	repo repository.Interface,
 	provider geocoding.Provider,
+	providerName string,
 	metrics *metrics.Metrics,
 	numWorkers int,
 	pollInterval time.Duration,
@@ -44,6 +46,7 @@ func NewGeocodingServie(
 		log:          log,
 		repo:         repo,
 		provider:     provider,
+		providerName: providerName,
 		metrics:      metrics,
 		numWorkers:   numWorkers,
 		pollInterval: pollInterval,
@@ -129,7 +132,7 @@ func (gs *GeocodingService) worker(ctx context.Context, idx int, wg *sync.WaitGr
 		startTime := time.Now()
 		coords, err := gs.provider.Geocode(ctx, task.Address)
 		duration := time.Since(startTime).Seconds()
-		gs.metrics.RequestSeconds.WithLabelValues("google").Observe(duration)
+		gs.metrics.RequestSeconds.WithLabelValues(gs.providerName).Observe(duration)
 
 		if err != nil {
 			gs.log.ErrorContext(ctx, "Failed to geocode", "worker", idx, "task", task.ID)

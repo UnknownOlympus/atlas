@@ -15,18 +15,20 @@ import (
 // Fields:
 // - Env: The current environment (e.g., local, dev, prod).
 // - Port: The port for the geocoder monitoring server.
-// - APIKey: The API key for accessing external services.
+// - ProviderType: The type of geocoding provider to use (google, nominatim).
+// - APIKey: The API key for accessing external services (required for Google).
 // - Workers: The number of concurrent workers for processing requests.
 // - Interval: The duration between processing intervals.
 // - Database: Configuration settings for the PostgreSQL database.
 type Config struct {
-	Env        string         `yaml:"env"`               // Env is the current environment: local, dev, prod.
-	Port       int            `yaml:"geocoder.port"`     // Port is the geocoder monitoring server port.
-	APIKey     string         `yaml:"geocoder.api_key"`  // The API key for accessing external services.
-	Workers    int            `yaml:"geocoder.workers"`  // The number of concurrent workers for processing requests.
-	Interval   time.Duration  `yaml:"geocoder.interval"` // The duration between processing intervals.
-	Database   PostgresConfig `yaml:"postgres"`          // Database holds the postgres database configuration
-	AddrPrefix string         `yaml:"addr_prefix"`       // Address prefix for more accurate geocoding
+	Env          string         `yaml:"env"`               // Env is the current environment: local, dev, prod.
+	Port         int            `yaml:"geocoder.port"`     // Port is the geocoder monitoring server port.
+	ProviderType string         `yaml:"provider.type"`     // ProviderType specifies which geocoding provider to use
+	APIKey       string         `yaml:"geocoder.api_key"`  // The API key for accessing external services.
+	Workers      int            `yaml:"geocoder.workers"`  // The number of concurrent workers for processing requests.
+	Interval     time.Duration  `yaml:"geocoder.interval"` // The duration between processing intervals.
+	Database     PostgresConfig `yaml:"postgres"`          // Database holds the postgres database configuration
+	AddrPrefix   string         `yaml:"addr_prefix"`       // Address prefix for more accurate geocoding
 }
 
 // PostgresConfig struct holds the configuration details for connecting to a PostgreSQL database.
@@ -58,12 +60,13 @@ func MustLoad() *Config {
 	}
 
 	return &Config{
-		Env:        setDeafultEnv("ATLAS_ENV", "production"),
-		AddrPrefix: setDeafultEnv("ATLAS_ADDRESS_PREFIX", ""),
-		Port:       healthPort,
-		APIKey:     os.Getenv("ATLAS_PROVIDER_API_KEY"),
-		Workers:    workers,
-		Interval:   interval,
+		Env:          setDeafultEnv("ATLAS_ENV", "production"),
+		AddrPrefix:   setDeafultEnv("ATLAS_ADDRESS_PREFIX", ""),
+		Port:         healthPort,
+		ProviderType: setDeafultEnv("ATLAS_PROVIDER_TYPE", "google"), // Default to Google for backward compatibility
+		APIKey:       os.Getenv("ATLAS_PROVIDER_API_KEY"),
+		Workers:      workers,
+		Interval:     interval,
 		Database: PostgresConfig{
 			Host:     os.Getenv("DB_HOST"),
 			Port:     os.Getenv("DB_PORT"),
