@@ -59,12 +59,12 @@ func main() {
 	repo := repository.NewRepository(dtb, logger)
 
 	// Create geocoding provider using factory pattern based on configuration
-	// This allows runtime selection between different providers (Google, Nominatim, etc.)
-	googleRateLimit := 50
+	// This allows runtime selection between different providers (Google, Visicom, Nominatim, etc.)
+	rateLimit := 50
 	providerConfig := geocoding.ProviderConfig{
 		Type:      geocoding.ProviderType(cfg.ProviderType),
 		APIKey:    cfg.APIKey,
-		RateLimit: googleRateLimit / cfg.Workers,
+		RateLimit: rateLimit / cfg.Workers,
 		Logger:    logger,
 	}
 
