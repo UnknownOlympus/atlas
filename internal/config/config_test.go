@@ -11,7 +11,7 @@ import (
 func Test_MustLoadFromFile(t *testing.T) {
 	t.Setenv("ATLAS_ENV", "local")
 	t.Setenv("ATLAS_INTERVAL", "10m")
-	t.Setenv("ATLAS_PROVIDER_API_KEY", "testAPIKey")
+	t.Setenv("ATLAS_PROVIDER_KEY", "testAPIKey")
 	t.Setenv("ATLAS_ADDRESS_PREFIX", "USA, ")
 	t.Setenv("DB_HOST", "testHost")
 	t.Setenv("DB_PORT", "12345")

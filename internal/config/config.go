@@ -64,7 +64,7 @@ func MustLoad() *Config {
 		AddrPrefix:   setDeafultEnv("ATLAS_ADDRESS_PREFIX", ""),
 		Port:         healthPort,
 		ProviderType: setDeafultEnv("ATLAS_PROVIDER_TYPE", "google"), // Default to Google for backward compatibility
-		APIKey:       os.Getenv("ATLAS_PROVIDER_API_KEY"),
+		APIKey:       os.Getenv("ATLAS_PROVIDER_KEY"),
 		Workers:      workers,
 		Interval:     interval,
 		Database: PostgresConfig{
