@@ -135,7 +135,7 @@ func (gs *GeocodingService) worker(ctx context.Context, idx int, wg *sync.WaitGr
 		gs.metrics.RequestSeconds.WithLabelValues(gs.providerName).Observe(duration)
 
 		if err != nil {
-			gs.log.ErrorContext(ctx, "Failed to geocode", "worker", idx, "task", task.ID)
+			gs.log.ErrorContext(ctx, "Failed to geocode", "worker", idx, "task", task.ID, "error", err)
 			gs.metrics.TaskProcessed.WithLabelValues("failure").Inc()
 			gs.metrics.APIErrors.Inc()
 
