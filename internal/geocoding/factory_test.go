@@ -101,6 +101,48 @@ func TestNewProvider(t *testing.T) {
 		require.NotNil(t, provider)
 	})
 
+	t.Run("create Visicom provider successfully", func(t *testing.T) {
+		config := geocoding.ProviderConfig{
+			Type:      geocoding.ProviderTypeVisicom,
+			APIKey:    "test-api-key",
+			RateLimit: 5,
+			Logger:    logger,
+		}
+
+		provider, err := geocoding.NewProvider(config)
+
+		require.NoError(t, err)
+		require.NotNil(t, provider)
+	})
+
+	t.Run("create Visicom provider without API key", func(t *testing.T) {
+		config := geocoding.ProviderConfig{
+			Type:      geocoding.ProviderTypeVisicom,
+			APIKey:    "",
+			RateLimit: 5,
+			Logger:    logger,
+		}
+
+		provider, err := geocoding.NewProvider(config)
+
+		require.Error(t, err)
+		require.Nil(t, provider)
+	})
+
+	t.Run("create Visicom provider without rate limit", func(t *testing.T) {
+		config := geocoding.ProviderConfig{
+			Type:      geocoding.ProviderTypeVisicom,
+			APIKey:    "test-api-key",
+			RateLimit: 0,
+			Logger:    logger,
+		}
+
+		provider, err := geocoding.NewProvider(config)
+
+		require.NoError(t, err)
+		require.NotNil(t, provider)
+	})
+
 	t.Run("unsupported provider type", func(t *testing.T) {
 		config := geocoding.ProviderConfig{
 			Type:   geocoding.ProviderType("unsupported"),
@@ -132,4 +174,5 @@ func TestProviderType_Constants(t *testing.T) {
 	// Verify that provider type constants are correctly defined
 	assert.Equal(t, "google", string(geocoding.ProviderTypeGoogle))
 	assert.Equal(t, "nominatim", string(geocoding.ProviderTypeNominatim))
+	assert.Equal(t, "visicom", string(geocoding.ProviderTypeVisicom))
 }

@@ -16,6 +16,8 @@ const (
 	ProviderTypeGoogle ProviderType = "google"
 	// ProviderTypeNominatim represents OpenStreetMap Nominatim geocoding provider.
 	ProviderTypeNominatim ProviderType = "nominatim"
+	// ProviderTypeVisicom represents Visicom Maps geocoding provider.
+	ProviderTypeVisicom ProviderType = "visicom"
 )
 
 // ProviderConfig holds configuration for creating a geocoding provider.
@@ -40,6 +42,8 @@ func NewProvider(config ProviderConfig) (Provider, error) {
 		return newGoogleProvider(config)
 	case ProviderTypeNominatim:
 		return newNominatimProvider(config)
+	case ProviderTypeVisicom:
+		return newVisicomProvider(config)
 	default:
 		return nil, fmt.Errorf("unsupported provider type: %s", config.Type)
 	}
@@ -73,4 +77,18 @@ func newGoogleProvider(config ProviderConfig) (Provider, error) {
 func newNominatimProvider(config ProviderConfig) (Provider, error) {
 	// Nominatim is free and doesn't require an API key
 	return NewNominatimProvider(config.Logger), nil
+}
+
+// newVisicomProvider creates a Visicom geocoding provider.
+func newVisicomProvider(config ProviderConfig) (Provider, error) {
+	if config.APIKey == "" {
+		return nil, errors.New("API key is required for Visicom provider")
+	}
+
+	if config.RateLimit == 0 {
+		config.RateLimit = 5
+		config.Logger.Warn("Rate limit for Visicom API not set, set a default value", "value", config.RateLimit)
+	}
+
+	return NewVisicomProvider(config.APIKey, config.RateLimit, config.Logger), nil
 }
